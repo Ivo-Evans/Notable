@@ -1,9 +1,8 @@
 use rusqlite::{Connection, Result};
-#[path = "../filesystem/filepath.rs"]
-mod filepath;
+use crate::filesystem;
 
 pub fn init() -> Result<Connection> {
-    let conn = Connection::open(filepath::db_file_path())?;
+    let conn = Connection::open(filesystem::filepath::db_file_path())?;
 
     let res = conn.execute(
         "create table if not exists notes (

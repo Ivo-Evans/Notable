@@ -1,14 +1,11 @@
-#[path = "./database/init.rs"]
-mod init_db;
-#[path = "./filesystem/init.rs"]
-mod init_fs;
-
+mod database;
+mod filesystem;
 mod command;
 
 fn main() {
-    init_fs::init();
+    filesystem::init::init();
 
-    init_db::init().ok();
+    database::init::init().ok();
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![command::greet])
