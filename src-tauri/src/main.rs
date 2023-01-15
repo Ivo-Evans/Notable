@@ -1,11 +1,19 @@
+mod command;
 mod database;
 mod filesystem;
-mod command;
 
 fn main() {
     filesystem::init::init();
 
-    database::init::init().ok();
+    let connection = database::init().unwrap();
+    let notes = database::list_notes(&connection).unwrap();
+    for note in &notes {
+        println!("Found note {:?}", note.created_at);
+    }
+
+    database::list_notes(&connection).unwrap();
+
+    database::add_note(&connection).unwrap();
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![command::greet])
