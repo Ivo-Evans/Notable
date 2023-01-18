@@ -22,8 +22,8 @@ pub fn init() -> Result<Connection> {
 }
 
 pub struct Note {
-    pub created_at: u32,
-    pub modified_at: u32,
+    pub created_at: u64,
+    pub modified_at: u64,
     pub content: String,
 }
 
