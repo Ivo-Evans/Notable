@@ -1,0 +1,22 @@
+.noteSummary {
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 3px;
+  padding: 17px;
+}
+
+.noteSummary:hover,
+.noteSummary:focus {
+  background-color: #eee;
+  /* animate fade in? */
+}
+
+.name,
+.content {
+  margin: 0;
+  /* todo */
+}
+
+.name {
+  font-weight: 900;
+}

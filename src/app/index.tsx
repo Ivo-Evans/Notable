@@ -1,8 +1,9 @@
 import { createSignal, createEffect } from "solid-js";
 import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
-import { NoteSummary } from "./types";
-import Sidebar from "./components/molecues/sidebar";
+import { NoteSummary } from "../types";
+import Sidebar from "../components/molecues/sidebar";
+import styles from "./styles.module.css"
+import Editor from "../components/molecues/editor";
 
 function App() {
   const [getNotes, setNotes] = createSignal<NoteSummary[]>([]);
@@ -13,8 +14,9 @@ function App() {
   });
 
   return (
-    <div class="container">
+    <div class={styles.app}>
       <Sidebar notes={getNotes()} />
+      <Editor />
     </div>
   );
 }

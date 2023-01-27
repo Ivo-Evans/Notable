@@ -1,0 +1,8 @@
+.editor {
+    max-height: 100%;
+    overflow-y: scroll;
+    outline: none;
+    font-size: 18px;
+    padding: 20px;
+}
+

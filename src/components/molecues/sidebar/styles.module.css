@@ -1,0 +1,8 @@
+.sidebar {
+  width: 250px;
+  border-right: 1px solid #eee;
+  max-height: 100vh;
+  overflow-y: scroll;
+  padding: 0 5px;
+  cursor: pointer;
+}
