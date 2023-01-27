@@ -1,12 +1,7 @@
 use crate::database;
 
-
 #[tauri::command]
-pub fn list_notes() -> () {
-    let notes = database::list_notes().unwrap();
-    for note in &notes {
-        println!("Found note {:?}", note.created_at);
-    }
-    // jsonify?
-    return ();
+pub fn list_note_summaries() -> Vec<database::NoteSummary> {
+    let notes = database::list_note_summaries().unwrap();
+    return notes;
 }

@@ -1,6 +1,6 @@
 use crate::filesystem;
+use crate::time_utils;
 use rusqlite::{Connection, Result};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 fn init() -> Result<Connection> {
     let conn = Connection::open(filesystem::filepath::db_file_path())?;
@@ -23,21 +23,22 @@ fn init() -> Result<Connection> {
 
 thread_local!(static _CONNECTION: Connection = init().unwrap());
 
-pub struct Note {
-    pub created_at: u64,
-    pub modified_at: u64,
+#[derive(serde::Serialize)]
+pub struct NoteSummary {
+    pub name: String,
     pub content: String,
 }
 
-pub fn list_notes() -> Result<Vec<Note>> {
+pub fn list_note_summaries() -> Result<Vec<NoteSummary>> {
     return _CONNECTION.with(|connection| {
-        let mut statement = connection.prepare("select * from notes;").unwrap();
+        let mut statement = connection
+            .prepare("select created_at, content from notes;")
+            .unwrap();
 
         let rows = statement.query_map([], |row| {
-            Ok(Note {
-                created_at: row.get(0)?,
-                modified_at: row.get(1)?,
-                content: row.get(2)?,
+            Ok(NoteSummary {
+                name: time_utils::friendly_time_from_seconds(row.get(0)?),
+                content: row.get(1)?,
             })
         })?;
 
@@ -49,14 +50,10 @@ pub fn list_notes() -> Result<Vec<Note>> {
 
 pub fn add_note() -> Result<usize> {
     return _CONNECTION.with(|connection| {
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
 
         let res = connection.execute(
             "insert into notes (created_at, last_modified, content) values (?1, ?1, '');",
-            [now],
+            [time_utils::current_time_in_seconds()],
         );
 
         return res;
