@@ -8,7 +8,11 @@ fn main() {
     database::add_note().unwrap();
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![command::list_note_summaries])
+        .invoke_handler(tauri::generate_handler![
+            command::list_note_summaries,
+            command::open_note,
+            command::save_note
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

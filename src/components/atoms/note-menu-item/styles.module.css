@@ -1,12 +1,12 @@
-.noteSummary {
+.note {
   border-radius: 5px;
   cursor: pointer;
   margin: 3px;
   padding: 17px;
 }
 
-.noteSummary:hover,
-.noteSummary:focus {
+.note:hover,
+.note:focus {
   background-color: #eee;
   /* animate fade in? */
 }

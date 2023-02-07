@@ -1,16 +1,17 @@
 import { Component } from "solid-js";
-import { NoteSummary } from "../../../types";
+import { Note } from "../../../types";
 import styles from "./styles.module.css";
 
 interface Props {
-  noteSummary: NoteSummary;
+  note: Note;
+  openNote: (created_at: number) => Promise<void>;
 }
 
-const NoteMenuItem: Component<Props> = ({ noteSummary }) => {
+const NoteMenuItem: Component<Props> = (props) => {
   return (
-    <div class={styles.noteSummary}>
-      <p class={styles.content}>{noteSummary.content}</p>
-      <p class={styles.name}>{noteSummary.name}</p>
+    <div class={styles.note} onClick={() => props.openNote(props.note.created_at)}>
+      <p class={styles.content}>{props.note.content}</p>
+      <p class={styles.name}>{props.note.friendly_name}</p>
     </div>
   );
 };
