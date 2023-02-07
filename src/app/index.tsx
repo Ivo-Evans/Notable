@@ -16,16 +16,22 @@ function App() {
     setOpenNote(openNote);
   };
 
-  const [getNotes] = createResource(
+  const [getNotes, { mutate: mutateNotes }] = createResource(
     async () => {
       const notes = await invoke<Note[]>("list_note_summaries");
       if (notes.length && !getOpenNote()) {
-        openNote(notes[0].created_at);
+        await openNote(notes[0].created_at);
       }
       return notes;
     },
     { initialValue: [] }
   );
+
+  const createNote = async () => {
+    const note = await invoke<Note>("add_note")
+    mutateNotes(notes => [note, ...notes])
+    await openNote(note.created_at)
+  }
 
   const saveNote = async (createdAt: number, content: string) => {
     invoke<Note>("save_note", { createdAt, content });
@@ -33,7 +39,7 @@ function App() {
 
   return (
     <div class={styles.app}>
-      <Sidebar notes={getNotes()} openNote={openNote} />
+      <Sidebar notes={getNotes()} openNote={openNote} createNote={createNote} />
       <Editor note={getOpenNote()} saveNote={saveNote} />
     </div>
   );

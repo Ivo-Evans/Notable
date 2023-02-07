@@ -34,7 +34,7 @@ pub struct NoteSummary {
 pub fn list_note_summaries() -> Result<Vec<NoteSummary>> {
     return _CONNECTION.with(|connection| {
         let mut statement = connection
-            .prepare("select created_at, content from notes;")
+            .prepare("select created_at, content from notes order by created_at desc")
             .unwrap();
 
         let rows = statement.query_map([], |row| {
@@ -68,14 +68,20 @@ pub fn open_note(created_at: u64) -> Result<NoteSummary> {
     });
 }
 
-pub fn add_note() -> Result<usize> {
+pub fn add_note() -> Result<NoteSummary> {
     return _CONNECTION.with(|connection| {
-        let res = connection.execute(
-            "insert into notes (created_at, last_modified, content) values (?1, ?1, '');",
-            [time_utils::current_time_in_seconds()],
-        );
+        let mut statement = connection.prepare("insert into notes (created_at, last_modified, content) values (?1, ?1, '') returning created_at, content;")?;
+        let mut rows = statement.query_map([time_utils::current_time_in_seconds()], |row| {
+            Ok(NoteSummary {
+                friendly_name: time_utils::friendly_time_from_seconds(row.get(0)?),
+                created_at: row.get(0)?,
+                content: row.get(1)?,
+            })
+        })?;
+        let row = rows.nth(0).unwrap().unwrap();
 
-        return res;
+
+        return Ok(row);
     });
 }
 
