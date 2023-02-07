@@ -60,10 +60,11 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "maximized": true,
+        "height": 900,
         "resizable": true,
-        "title": "new",
-        "width": 800
+        "title": "Notable",
+        "width": 1200
       }
     ]
   }
