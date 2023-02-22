@@ -1,7 +1,7 @@
 use crate::database::{self, NoteSummary};
 
 #[tauri::command]
-pub fn list_note_summaries() -> Vec<database::NoteSummary> {
+pub fn list_note_summaries() -> Vec<NoteSummary> {
     return database::list_note_summaries().unwrap();
 }
 
