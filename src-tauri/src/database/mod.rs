@@ -34,7 +34,7 @@ pub struct NoteSummary {
 pub fn list_note_summaries() -> Result<Vec<NoteSummary>> {
     return _CONNECTION.with(|connection| {
         let mut statement = connection
-            .prepare("select created_at, content from notes order by created_at desc")
+            .prepare("select created_at, substr(content, 0, 29) as content from notes order by created_at desc")
             .unwrap();
 
         let rows = statement.query_map([], |row| {
