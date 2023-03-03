@@ -4,21 +4,27 @@ import NoteMenuItem from "../../atoms/note-menu-item";
 import styles from "./styles.module.css";
 
 interface Props {
-  notes: Note[];
-  openNote: (created_at: number) => Promise<void>;
+  getNotes: Accessor<Note[]>;
+  openNote: (index: number, created_at: number) => Promise<void>;
   createNote: () => Promise<void>;
 }
 
 const Sidebar: Component<Props> = (props) => {
+  console.log("✌", props.getNotes());
   return (
     <div class={styles.sidebar}>
       <div class={styles.addRow}>
-         <button class={styles.addButton} onClick={() => props.createNote()}>
+        <button class={styles.addButton} onClick={() => props.createNote()}>
           +
-         </button>
+        </button>
       </div>
-      <For each={props.notes}>
-        {(note) => <NoteMenuItem note={note} openNote={props.openNote} />}
+      <For each={props.getNotes()}>
+        {(note, getIndex) => (
+          <NoteMenuItem
+            note={note}
+            openNote={(created_at) => props.openNote(getIndex(), created_at)}
+          />
+        )}
       </For>
     </div>
   );
