@@ -1,14 +1,37 @@
+
 .note {
   border-radius: 5px;
   cursor: pointer;
   margin: 3px;
   padding: 17px;
+
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 .note:hover,
 .note:focus {
   background-color: #eee;
   /* animate fade in? */
+}
+
+.summary {
+  flex-grow: 1;
+  max-width: calc(100% - 40px);
+}
+
+.delete {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+
+.delete:hover, .delete:focus {
+  background-color: #ddd;
 }
 
 .name,

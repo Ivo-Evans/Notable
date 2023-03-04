@@ -34,7 +34,7 @@ pub struct NoteSummary {
 pub fn list_note_summaries() -> Result<Vec<NoteSummary>> {
     return _CONNECTION.with(|connection| {
         let mut statement = connection
-            .prepare("select created_at, substr(content, 0, 29) as content from notes order by created_at desc")
+            .prepare("select created_at, substr(content, 0, 18) as content from notes order by created_at desc")
             .unwrap();
 
         let rows = statement.query_map([], |row| {
@@ -52,6 +52,7 @@ pub fn list_note_summaries() -> Result<Vec<NoteSummary>> {
 }
 
 pub fn open_note(created_at: u64) -> Result<NoteSummary> {
+    println!("Trying to open note #{}", created_at);
     return _CONNECTION.with(|connection| {
         // println!("{}", created_at);
         let mut statement =
@@ -102,6 +103,16 @@ pub fn save_note(created_at: u64, content: String) -> Result<NoteSummary> {
         )?;
         let row = rows.nth(0).unwrap().unwrap();
         Ok(row)
+    });
+}
+
+pub fn delete_note(created_at: u64) -> Result<()> {
+    return  _CONNECTION.with(|connection| {
+        println!("Deleting note #{}", created_at);
+        let mut statement = connection.prepare("delete from notes where created_at = ?")?;
+        statement.execute([created_at]).unwrap();
+        Ok(())
+
     });
 }
 

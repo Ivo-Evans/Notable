@@ -6,6 +6,9 @@ import {
 import { Note } from "../../../types";
 import styles from "./styles.module.css";
 
+const ONE_SECOND = 1000
+const SAVE_INTERVAL = ONE_SECOND/ 2
+
 interface Props {
   note: Note | null;
   saveNote: (created_at: number, content: string) => Promise<void>;
@@ -22,7 +25,7 @@ const Editor: Component<Props> = (props) => {
       }
       const val = editor?.textContent || ""
       props.saveNote(props.note.created_at, val)
-    }, 500);
+    }, SAVE_INTERVAL);
   });
   
   onCleanup(() => {
@@ -30,7 +33,7 @@ const Editor: Component<Props> = (props) => {
   });
   return (
     <div ref={editor} class={styles.editor} 
-    contentEditable
+    contentEditable={props.note !== null}
     >
       {props.note?.content || ""}
     </div>

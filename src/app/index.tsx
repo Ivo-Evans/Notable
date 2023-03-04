@@ -7,21 +7,17 @@ import Editor from "../components/molecues/editor";
 
 function App() {
   const [getOpenNote, setOpenNote] = createSignal<Note | null>(null);
-  const [getOpenNoteIndex, setOpenNoteIndex] = createSignal<number | null>(
-    null
-  );
 
-  const openNote = async (index: number, created_at: number) => {
+  const openNote = async (created_at: number) => {
     const openNote = await invoke<Note>("open_note", { createdAt: created_at });
-    setOpenNoteIndex(index);
     setOpenNote(openNote);
   };
 
-  const [getNotes, { mutate: mutateNotes }] = createResource(
+  const [getSidebarNotes, { mutate: mutateSidebarNotes }] = createResource(
     async () => {
       const notes = await invoke<Note[]>("list_note_summaries");
       if (notes.length && !getOpenNote()) {
-        await openNote(0, notes[0].created_at);
+        await openNote(notes[0].created_at);
       }
       return notes;
     },
@@ -30,30 +26,50 @@ function App() {
 
   const createNote = async () => {
     const note = await invoke<Note>("add_note");
-    mutateNotes((notes) => [note, ...notes]);
-    await openNote(0, note.created_at);
+    mutateSidebarNotes((notes) => [note, ...notes]);
+    await openNote(note.created_at);
   };
 
   const saveNote = async (createdAt: number, content: string) => {
-    const openNoteIndex = getOpenNoteIndex();
-    if (openNoteIndex === null) {
-      return;
-    }
     await invoke<Note>("save_note", { createdAt, content });
-    const notes = getNotes();
-    // mutate at index instead of iterating and replacing for performance
-    const newNote = { ...notes[openNoteIndex], content: content.slice(0, 29) };
-    notes[openNoteIndex] = newNote;
-    // clone the array so solid's reactivity system is aware of a change
-    mutateNotes([...notes]);
+
+    mutateSidebarNotes((notes) =>
+      notes.map((note) =>
+        note.created_at === createdAt ? { ...note, content } : note
+      )
+    );
+  };
+
+  const deleteNote = async (createdAt: number) => {
+    const notes = getSidebarNotes();
+    if (notes.length < 2) {
+      setOpenNote(null);
+    } else {
+      const openNoteIndex = notes.findIndex(
+        (note) => note.created_at === createdAt
+      );
+      const newerNote = notes[openNoteIndex - 1];
+      const olderNote = notes[openNoteIndex + 1];
+      if (!(newerNote || olderNote)) {
+        throw new Error(
+          `Index out of bounds: tried to delete note created_at ${createdAt} with index ${openNoteIndex}, but there is no note before or after`
+        );
+      }
+      openNote((newerNote || olderNote).created_at);
+    }
+    await invoke("delete_note", { createdAt });
+    mutateSidebarNotes((notes) =>
+      notes.filter((note) => note.created_at !== createdAt)
+    );
   };
 
   return (
     <div class={styles.app}>
       <Sidebar
-        getNotes={getNotes}
+        getNotes={getSidebarNotes}
         openNote={openNote}
         createNote={createNote}
+        deleteNote={deleteNote}
       />
       <Editor note={getOpenNote()} saveNote={saveNote} />
     </div>

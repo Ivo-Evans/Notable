@@ -1,16 +1,16 @@
 import { Accessor, Component, For } from "solid-js";
 import { Note } from "../../../types";
-import NoteMenuItem from "../../atoms/note-menu-item";
+import NoteMenuItem from "../note-menu-item";
 import styles from "./styles.module.css";
 
 interface Props {
   getNotes: Accessor<Note[]>;
-  openNote: (index: number, created_at: number) => Promise<void>;
+  openNote: (created_at: number) => Promise<void>;
   createNote: () => Promise<void>;
+  deleteNote: (created_at: number)=> Promise<void>;
 }
 
 const Sidebar: Component<Props> = (props) => {
-  console.log("✌", props.getNotes());
   return (
     <div class={styles.sidebar}>
       <div class={styles.addRow}>
@@ -19,10 +19,11 @@ const Sidebar: Component<Props> = (props) => {
         </button>
       </div>
       <For each={props.getNotes()}>
-        {(note, getIndex) => (
+        {(note) => (
           <NoteMenuItem
             note={note}
-            openNote={(created_at) => props.openNote(getIndex(), created_at)}
+            openNote={(created_at) => props.openNote(created_at)}
+            deleteNote={props.deleteNote}
           />
         )}
       </For>

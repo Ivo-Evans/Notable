@@ -19,3 +19,8 @@ pub fn save_note(created_at: u64, content: String) -> NoteSummary {
 pub fn add_note() -> NoteSummary {
     return database::add_note().unwrap();
 }
+
+#[tauri::command]
+pub fn delete_note(created_at: u64) -> () {
+    return database::delete_note(created_at).unwrap()
+}

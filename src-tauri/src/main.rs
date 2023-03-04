@@ -12,6 +12,7 @@ fn main() {
             command::open_note,
             command::save_note,
             command::add_note,
+            command::delete_note
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
